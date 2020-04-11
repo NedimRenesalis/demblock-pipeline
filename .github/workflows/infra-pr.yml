@@ -6,11 +6,8 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout'
-        uses: actions/checkout@master
-
-      - name: 'Google Cloud Login'
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - uses: actions/checkout@master
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
