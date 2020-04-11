@@ -1,6 +1,6 @@
 name: 'TF - Deploy Infrastructure'
 on:
-  watch
+  watch:
     types: [started]
 jobs:
   terraform:
