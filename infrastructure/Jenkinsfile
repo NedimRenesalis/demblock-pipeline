@@ -1,5 +1,6 @@
 // Jenkinsfile
-String credentialsId = 'gcp-demblock-service-account'
+String gcpCredentialsId = 'gcp-demblock-service-account'
+String sqlCredentialsId = 'demblock-sql-credentials'
 
 try {
   stage('checkout') {
@@ -12,13 +13,13 @@ try {
   // Run terraform init
   stage('init') {
     node {
-      withCredentials([[
-        credentialsId: credentialsId,
-        variable: 'GC_KEY'
-      ]]) {
+      withCredentials(
+          file([credentialsId: gcpCredentialsId, variable: 'GC_KEY']),
+          usernamePassword(credentialsId: sqlCredentialsId, usernameVariable: 'TF_VAR_SQL_USER', passwordVariable: 'TF_VAR_SQL_PASSWORD')
+        ) {
         ansiColor('xterm') {
             sh './auth.sh'
-            sh 'terraform init'
+            sh 'terraform init -var "region=$TF_VAR_SQL_USER" -var'
         }
       }
     }
@@ -27,10 +28,10 @@ try {
   // Run terraform plan
   stage('plan') {
     node {
-      withCredentials([[
-        credentialsId: credentialsId,
-        variable: 'GC_KEY'
-      ]]) {
+      withCredentials(
+          file([credentialsId: gcpCredentialsId, variable: 'GC_KEY']),
+          usernamePassword(credentialsId: sqlCredentialsId, usernameVariable: 'TF_VAR_SQL_USER', passwordVariable: 'TF_VAR_SQL_PASSWORD')
+        ) {
         ansiColor('xterm') {
             sh './auth.sh'
             sh 'terraform plan'
@@ -43,10 +44,10 @@ try {
     // Run terraform apply
     stage('apply') {
       node {
-        withCredentials([[
-            credentialsId: credentialsId,
-            variable: 'GC_KEY'
-        ]]) {
+        withCredentials(
+          file([credentialsId: gcpCredentialsId, variable: 'GC_KEY']),
+          usernamePassword(credentialsId: sqlCredentialsId, usernameVariable: 'TF_VAR_SQL_USER', passwordVariable: 'TF_VAR_SQL_PASSWORD')
+         ) {
           ansiColor('xterm') {
             sh './auth.sh'
             sh 'terraform apply -auto-approve'
@@ -58,10 +59,10 @@ try {
     // Run terraform show
     stage('show') {
       node {
-        withCredentials([[
-            credentialsId: credentialsId,
-            variable: 'GC_KEY'
-        ]]) {
+        withCredentials(
+          file([credentialsId: gcpCredentialsId, variable: 'GC_KEY']),
+          usernamePassword(credentialsId: sqlCredentialsId, usernameVariable: 'TF_VAR_SQL_USER', passwordVariable: 'TF_VAR_SQL_PASSWORD')
+         ) {
           ansiColor('xterm') {
             sh './auth.sh'
             sh 'terraform show'

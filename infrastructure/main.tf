@@ -5,6 +5,9 @@ terraform {
     prefix  = "terraform/state"
   }
 }
+# Required vars
+variable "SQL_USER" {}
+variable "SQL_PASSWORD" {}
 
 # Authentication
 provider "google" {
@@ -71,6 +74,13 @@ resource "google_sql_database_instance" "demblock_db_instance" {
 resource "google_sql_database" "demblock_db" {
   project  = "demblock"
   name     = "demblock-db"
+  instance = google_sql_database_instance.demblock_db_instance.name
+}
+
+resource "google_sql_user" "users" {
+  name     = var.SQL_USER
+  password = var.SQL_PASSWORD
+  host     = "253.123.123.1"
   instance = google_sql_database_instance.demblock_db_instance.name
 }
 
