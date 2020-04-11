@@ -4,7 +4,7 @@ on:
     types: [started]
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Infra - Deploy'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
