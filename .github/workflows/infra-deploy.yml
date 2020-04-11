@@ -1,7 +1,7 @@
 name: 'TF - Deploy Infrastructure'
 on:
   watch:
-    types: [started]
+    types: []
 jobs:
   terraform:
     name: 'Infra - Deploy'
