@@ -9,7 +9,8 @@ jobs:
       - name: 'Checkout'
         uses: actions/checkout@master
 
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - name: 'Google Cloud Login'
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
@@ -21,7 +22,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-          tf_actions_working_dir: './infra'
+          tf_actions_working_dir: './infrastructure'
         env:
           TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
@@ -32,7 +33,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'init'
-          tf_actions_working_dir: './infra'
+          tf_actions_working_dir: './infrastructure'
         env:
           TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
@@ -43,7 +44,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'validate'
-          tf_actions_working_dir: './infra'
+          tf_actions_working_dir: './infrastructure'
         env:
           TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
@@ -54,7 +55,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'plan'
-          tf_actions_working_dir: './infra'
+          tf_actions_working_dir: './infrastructure'
         env:
           TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}

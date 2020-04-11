@@ -1,8 +1,8 @@
 # Terraform state will be stored in google bucket
 terraform {
   backend "gcs" {
-    bucket  = "tf-state-demblock"
-    prefix  = "terraform/state"
+    bucket = "tf-state-demblock"
+    prefix = "terraform/state"
   }
 }
 # Required vars
@@ -11,8 +11,8 @@ variable "SQL_PASSWORD" {}
 
 # Authentication
 provider "google" {
-  project     = "demblock"
-  region      = "europe-west1"
+  project = "demblock"
+  region  = "europe-west1"
 }
 
 # Kubernetes cluster
@@ -56,10 +56,10 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
 # PostgreSQL database
 resource "google_sql_database_instance" "demblock_db_instance" {
-  project  = "demblock"
+  project = "demblock"
   name    = "eu-demblock-db-instance"
   region  = "europe-west1"
-  
+
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
   settings {
