@@ -1,7 +1,5 @@
 name: 'TF - Destroy Infrastructure'
-on:
-  watch:
-    types: []
+on: []
 jobs:
   terraform:
     name: 'Infra - Destroy'
