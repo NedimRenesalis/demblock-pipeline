@@ -1,4 +1,4 @@
-name: 'TF - Deploy Infrastructure'
+name: 'TF'
 on:
   watch:
     types: [started]

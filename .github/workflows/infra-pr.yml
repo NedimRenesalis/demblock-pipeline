@@ -1,4 +1,4 @@
-name: 'TF - Validate PR'
+name: 'TF'
 on:
   - pull_request
 jobs:

@@ -1,4 +1,4 @@
-name: 'TF - Destroy Infrastructure'
+name: 'TF'
 on: push
 jobs:
   terraform:
