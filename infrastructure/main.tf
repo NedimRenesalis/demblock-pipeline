@@ -1,7 +1,7 @@
 # Terraform state will be stored in google bucket
 terraform {
   backend "gcs" {
-    bucket = "tf-state-demblock"
+    bucket = "tf-demblock"
     prefix = "terraform/state"
   }
 }
@@ -9,24 +9,46 @@ terraform {
 variable "SQL_USER" {}
 variable "SQL_PASSWORD" {}
 
-# Authentication
+# Auth
 provider "google" {
   project = "demblock"
   region  = "europe-west1"
+}
+
+# Private network
+resource "google_compute_network" "demblock_network" {
+  name = "demblock-shared"
+}
+
+resource "google_compute_global_address" "private_ip_address" {
+  name          = "demblock-private-ip"
+  purpose       = "VPC_PEERING"
+  address_type  = "INTERNAL"
+  prefix_length = 16
+  network       = google_compute_network.demblock_network.self_link
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  network                 = google_compute_network.demblock_network.self_link
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
 }
 
 # Kubernetes cluster
 resource "google_container_cluster" "eu_demblock_cluster" {
   project            = "demblock"
   name               = "eu-demblock-cluster"
-  network            = "default"
-  location           = "europe-west1"
+  location           = "europe-north1"
   initial_node_count = 2
 
+  depends_on = [google_service_networking_connection.private_vpc_connection]
+  network    = google_compute_network.demblock_network.self_link
   node_config {
-    machine_type = "f1-micro"
+    machine_type = "g1-small"
     disk_size_gb = "50"
+  }
 
+  ip_allocation_policy {
   }
 
   timeouts {
@@ -35,30 +57,30 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   }
 }
 
-# Private network
-resource "google_compute_network" "private_network" {
-  name = "private-network"
+
+# K8s auth
+data "google_client_config" "default" {
 }
 
-resource "google_compute_global_address" "private_ip_address" {
-  name          = "private-ip-address"
-  purpose       = "VPC_PEERING"
-  address_type  = "INTERNAL"
-  prefix_length = 16
-  network       = google_compute_network.private_network.self_link
+data "google_container_cluster" "demblock-cluster" {
+  name     = "eu-demblock-cluster"
+  location = "europe-north1"
 }
 
-resource "google_service_networking_connection" "private_vpc_connection" {
-  network                 = google_compute_network.private_network.self_link
-  service                 = "servicenetworking.googleapis.com"
-  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+provider "kubernetes" {
+  load_config_file = false
+  host             = "https://${data.google_container_cluster.demblock-cluster.endpoint}"
+  token            = data.google_client_config.default.access_token
+  cluster_ca_certificate = base64decode(
+    data.google_container_cluster.demblock-cluster.master_auth.0.cluster_ca_certificate,
+  )
 }
 
 # PostgreSQL database
 resource "google_sql_database_instance" "demblock_db_instance" {
   project = "demblock"
-  name    = "eu-demblock-db-instance"
-  region  = "europe-west1"
+  name    = "eu-demblock-db"
+  region  = "europe-north1"
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
@@ -66,38 +88,36 @@ resource "google_sql_database_instance" "demblock_db_instance" {
     tier = "db-f1-micro"
     ip_configuration {
       ipv4_enabled    = false
-      private_network = google_compute_network.private_network.self_link
+      private_network = google_compute_network.demblock_network.self_link
     }
   }
 }
 
-resource "google_sql_database" "demblock_db" {
-  project  = "demblock"
-  name     = "demblock-db"
-  instance = google_sql_database_instance.demblock_db_instance.name
-}
-
+# DB User
 resource "google_sql_user" "users" {
   name     = var.SQL_USER
   password = var.SQL_PASSWORD
-  host     = "253.123.123.1"
   instance = google_sql_database_instance.demblock_db_instance.name
 }
 
-# MongoDB
-resource "kubernetes_persistent_volume" "mongodb-demblock" {
-  metadata {
-    name = "mongodb-demblock"
-  }
-  spec {
-    capacity = {
-      storage = "2Gi"
-    }
-    access_modes = ["ReadWriteMany"]
-    persistent_volume_source {
-      vsphere_volume {
-        volume_path = "/mongodb/data"
-      }
-    }
-  }
+# SQL DBs for Demblock
+resource "google_sql_database" "demblock_db" {
+  project  = "demblock"
+  name     = "demblock"
+  instance = google_sql_database_instance.demblock_db_instance.name
+}
+
+resource "google_sql_database" "demblock_tge_db" {
+  project  = "demblock"
+  name     = "demblock-tge"
+  instance = google_sql_database_instance.demblock_db_instance.name
+}
+
+# Demblock Persistent Data
+resource "google_compute_disk" "demblock-disk" {
+  name  = "demblock-disk"
+  type  = "pd-standard"
+  zone  = "europe-north1-a"
+  size  = 15
+  physical_block_size_bytes = 4096
 }
