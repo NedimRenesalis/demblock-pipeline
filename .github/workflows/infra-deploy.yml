@@ -100,8 +100,23 @@ jobs:
           GKE_CLUSTER: $TF_VAR_GKE_CLUSTER
           GKE_ZONE: $TF_VAR_GKE_ZONE
 
+      # Deploy charts
+      - name: Helm - Install dependency
+        run: |
+          curl -fsSLo get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+      # Deploy cert manager
+      - name: Helm - Deploy cert manager
+        run: |
+          kubectl apply -f ./k8s/tiller.yaml
+          helm init --service-account tiller
+          helm upgrade --install --wait --atomic --namespace=kube-system stable/cert-manager
+          kubectl apply -f ./k8s/prod-cm.yaml
+
       # Bump tag
-      - name: Bump and push tag
+      - name: PostInfra - Bump and tag
         uses: anothrNick/github-tag-action@1.17.2
         env:
           WITH_V: true
