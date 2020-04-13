@@ -112,12 +112,12 @@ resource "google_compute_global_address" "demblock_token" {
 # 2) DNS ZONES
 resource "google_dns_managed_zone" "demblock_com" {
   dns_name = "demblock.com."
-  name     = "demblock"
+  name     = "zone-demblock"
 }
 
 resource "google_dns_managed_zone" "demblock_tge_com" {
   dns_name = "demblock-tge.com."
-  name     = "demblock-tge"
+  name     = "zone-demblock-tge"
 }
 
 #=======================================================================
