@@ -40,7 +40,7 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   project            = "demblock"
   name               = "eu-demblock-cluster"
   location           = "europe-north1-a"
-  initial_node_count = 2
+  initial_node_count = 4
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
   network    = google_compute_network.demblock_network.self_link
@@ -57,7 +57,6 @@ resource "google_container_cluster" "eu_demblock_cluster" {
     update = "40m"
   }
 }
-
 
 # K8s auth
 data "google_client_config" "default" {
@@ -119,6 +118,40 @@ resource "google_compute_disk" "demblock-disk" {
   name  = "demblock-disk"
   type  = "pd-standard"
   zone  = "europe-north1-a"
-  size  = 15
+  size  = 20
   physical_block_size_bytes = 4096
+}
+
+resource "kubernetes_persistent_volume" "demblock-volume" {
+  metadata {
+    name = "demblock-pv"
+  }
+  spec {
+    capacity = {
+      storage = "15Gi"
+    }
+    access_modes       = ["ReadWriteMany"]
+    storage_class_name = "standard"
+    persistent_volume_source {
+      gce_persistent_disk {
+        pd_name = "demblock-disk"
+      }
+    }
+  }
+}
+
+resource "kubernetes_persistent_volume_claim" "demblock-pvc" {
+  metadata {
+    name = "demblock-pvc"
+  }
+  spec {
+    access_modes       = ["ReadWriteMany"]
+    storage_class_name = "standard"
+    resources {
+      requests = {
+        storage = "15Gi"
+      }
+    }
+    volume_name = kubernetes_persistent_volume.demblock-volume.metadata.0.name
+  }
 }

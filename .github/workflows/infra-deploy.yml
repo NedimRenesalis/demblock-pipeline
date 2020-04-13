@@ -12,8 +12,8 @@ jobs:
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          service_account_email: ${{ secrets.GOOGLE_SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_SA_KEY }}
           export_default_credentials: true
         
       - name: 'Terraform Format'
@@ -23,9 +23,9 @@ jobs:
           tf_actions_subcommand: 'fmt'
           tf_actions_working_dir: './infrastructure'
         env:
-          TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
 
       - name: 'Terraform Init'
         uses: hashicorp/terraform-github-actions@master
@@ -34,9 +34,9 @@ jobs:
           tf_actions_subcommand: 'init'
           tf_actions_working_dir: './infrastructure'
         env:
-          TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
 
       - name: 'Terraform Validate'
         uses: hashicorp/terraform-github-actions@master
@@ -45,9 +45,9 @@ jobs:
           tf_actions_subcommand: 'validate'
           tf_actions_working_dir: './infrastructure'
         env:
-          TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
 
       - name: 'Terraform Plan'
         uses: hashicorp/terraform-github-actions@master
@@ -56,9 +56,9 @@ jobs:
           tf_actions_subcommand: 'plan'
           tf_actions_working_dir: './infrastructure'
         env:
-          TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
 
       - name: 'Terraform Apply'
         uses: hashicorp/terraform-github-actions@master
@@ -67,17 +67,6 @@ jobs:
           tf_actions_subcommand: 'apply'
           tf_actions_working_dir: './infrastructure'
         env:
-          TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
-
-      - name: 'Terraform Post Apply'
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.12.24
-          tf_actions_subcommand: 'apply'
-          tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.SQL_USER }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
