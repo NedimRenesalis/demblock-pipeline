@@ -96,17 +96,17 @@ provider "kubernetes" {
 #=======================================================================
 
 # 1) IP ADDRESSES
-resource "google_compute_global_address" "demblock" {
-  name = "demblock-global-ip"
-}
-
-resource "google_compute_global_address" "demblock_tge" {
-  name = "demblock-tge-global-ip"
-}
-
-resource "google_compute_global_address" "demblock_token" {
-  name = "demblock-token-global-ip"
-}
+#resource "google_compute_global_address" "demblock" {
+#  name = "demblock-global-ip"
+#}
+#
+#resource "google_compute_global_address" "demblock_tge" {
+#  name = "demblock-tge-global-ip"
+#}
+#
+#resource "google_compute_global_address" "demblock_token" {
+#  name = "demblock-token-global-ip"
+#}
 
 #=======================================================================
 # 2) DNS ZONES
@@ -122,47 +122,47 @@ resource "google_dns_managed_zone" "demblock_tge_com" {
 
 #=======================================================================
 # 3) RECORDS
-resource "google_dns_record_set" "frontend_demblock" {
-  managed_zone = google_dns_managed_zone.demblock_com.name
-  name         = "demblock.com."
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock.address]
-}
-
-resource "google_dns_record_set" "backend_demblock" {
-  managed_zone = google_dns_managed_zone.demblock_com.name
-  name         = "backend.demblock.com."
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock.address]
-}
-
-#=======================================================================
-
-resource "google_dns_record_set" "frontend_demblock_tge" {
-  managed_zone = google_dns_managed_zone.demblock_tge_com.name
-  name         = "demblock-tge.com."
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock_tge.address]
-}
-
-resource "google_dns_record_set" "backend_demblock_tge" {
-  managed_zone = google_dns_managed_zone.demblock_tge_com.name
-  name         = "backend.demblock-tge.com."
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock_tge.address]
-}
-
-resource "google_dns_record_set" "token_demblock_tge" {
-  managed_zone = google_dns_managed_zone.demblock_tge_com.name
-  name         = "token.demblock-tge.com."
-  type         = "A"
-  ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock_token.address]
-}
+#resource "google_dns_record_set" "frontend_demblock" {
+#  managed_zone = google_dns_managed_zone.demblock_com.name
+#  name         = "demblock.com."
+#  type         = "A"
+#  ttl          = 300
+#  rrdatas      = [google_compute_global_address.demblock.address]
+#}
+#
+#resource "google_dns_record_set" "backend_demblock" {
+#  managed_zone = google_dns_managed_zone.demblock_com.name
+#  name         = "backend.demblock.com."
+#  type         = "A"
+#  ttl          = 300
+#  rrdatas      = [google_compute_global_address.demblock.address]
+#}
+#
+##=======================================================================
+#
+#resource "google_dns_record_set" "frontend_demblock_tge" {
+#  managed_zone = google_dns_managed_zone.demblock_tge_com.name
+#  name         = "demblock-tge.com."
+#  type         = "A"
+#  ttl          = 300
+#  rrdatas      = [google_compute_global_address.demblock_tge.address]
+#}
+#
+#resource "google_dns_record_set" "backend_demblock_tge" {
+#  managed_zone = google_dns_managed_zone.demblock_tge_com.name
+#  name         = "backend.demblock-tge.com."
+#  type         = "A"
+#  ttl          = 300
+#  rrdatas      = [google_compute_global_address.demblock_tge.address]
+#}
+#
+#resource "google_dns_record_set" "token_demblock_tge" {
+#  managed_zone = google_dns_managed_zone.demblock_tge_com.name
+#  name         = "token.demblock-tge.com."
+#  type         = "A"
+#  ttl          = 300
+#  rrdatas      = [google_compute_global_address.demblock_token.address]
+#}
 
 
 #=======================================================================
