@@ -1,5 +1,5 @@
 apiVersion: cert-manager.io/v1alpha2
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:
@@ -9,7 +9,6 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
-    - selector: {}
-      http01:
+    - http01:
         ingress:
           class: nginx
