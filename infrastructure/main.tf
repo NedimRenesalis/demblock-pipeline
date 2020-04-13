@@ -92,22 +92,6 @@ provider "kubernetes" {
 }
 
 #=======================================================================
-# Depoloy docker secret
-#=======================================================================
-resource "kubernetes_secret" "docker-credentials" {
-  metadata {
-    name      = "pull-docker-creds"
-    namespace = "default"
-  }
-
-  data = {
-    ".dockerconfigjson" = "${file("./config.json")}"
-  }
-
-  type = "kubernetes.io/dockerconfigjson"
-}
-
-#=======================================================================
 # SQL DBs for Demblock
 #=======================================================================
 resource "google_sql_database_instance" "demblock_db_instance" {
