@@ -111,32 +111,28 @@ resource "google_compute_global_address" "demblock-token" {
 #=======================================================================
 # 2) DNS ZONES
 resource "google_dns_managed_zone" "demblock-com" {
-  count    = "1"
   dns_name = "demblock.com."
   name     = "demblock"
 }
 
 resource "google_dns_managed_zone" "demblock-tge-com" {
-  count    = "1"
   dns_name = "demblock-tge.com."
   name     = "demblock-tge"
 }
 
 #=======================================================================
 # 3) RECORDS
-resource "google_dns_record_set" "demblock" {
-  project      = "demblock"
-  managed_zone = "demblock"
-  name         = "demblock.com"
+resource "google_dns_record_set" "frontend-demblock" {
+  managed_zone = google_dns_managed_zone.demblock-com.name
+  name         = "demblock.com."
   type         = "A"
   ttl          = 300
   rrdatas      = [google_compute_global_address.demblock.address]
 }
 
 resource "google_dns_record_set" "backend-demblock" {
-  project      = "demblock"
-  managed_zone = "demblock"
-  name         = "backend.demblock.com"
+  managed_zone = google_dns_managed_zone.demblock-com.name
+  name         = "backend.demblock.com."
   type         = "A"
   ttl          = 300
   rrdatas      = [google_compute_global_address.demblock.address]
@@ -144,30 +140,25 @@ resource "google_dns_record_set" "backend-demblock" {
 
 #=======================================================================
 
-resource "google_dns_record_set" "demblock-tge" {
-  project      = "demblock"
-  managed_zone = "demblock-tge"
-  name         = "demblock-tge.com"
+resource "google_dns_record_set" "frontend-demblock-tge" {
+  managed_zone = google_dns_managed_zone.demblock-tge-com.name
+  name         = "demblock-tge.com."
   type         = "A"
   ttl          = 300
   rrdatas      = [google_compute_global_address.demblock-tge.address]
 }
 
 resource "google_dns_record_set" "backend-demblock-tge" {
-  project      = "demblock"
-  managed_zone = "demblock-tge"
-  name         = "backend.demblock-tge.com"
+  managed_zone = google_dns_managed_zone.demblock-tge-com.name
+  name         = "backend.demblock-tge.com."
   type         = "A"
   ttl          = 300
   rrdatas      = [google_compute_global_address.demblock-tge.address]
 }
 
-#=======================================================================
-
 resource "google_dns_record_set" "token-demblock-tge" {
-  project      = "demblock"
-  managed_zone = "demblock-tge"
-  name         = "token.demblock-tge.com"
+  managed_zone = google_dns_managed_zone.demblock-tge-com.name
+  name         = "token.demblock-tge.com."
   type         = "A"
   ttl          = 300
   rrdatas      = [google_compute_global_address.demblock-token.address]
