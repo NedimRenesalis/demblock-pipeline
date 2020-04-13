@@ -1,4 +1,4 @@
-name: 'TF'
+name: 'Infrastructure - Deploy'
 on:
   watch:
     types: [started]
@@ -18,7 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: 'GCP - Auth'
+
+      # Auth Google Services
+      - name: 'GCP - Project Auth'
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
@@ -26,14 +28,13 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_SA_KEY }}
           export_default_credentials: true
 
-      # helper for authentication
-      - name: 'GCP - Export docker secrets'
+      - name: 'GCP - Docker Auth'
         run: |-
           gcloud --quiet auth configure-docker
           echo ::set-env name=TF_VAR_DOCKER_SECRET::$(cat ~/.docker/config.json | base64 -w0)
           echo ::set-env name=DOCKER_PASSWORD::$(echo $GOOGLE_SA_KEY | base64 -w0)
-          
-
+      
+      # Deploy infrastructure via Terraform
       - name: 'Infra - Format'
         uses: hashicorp/terraform-github-actions@master
         with:
@@ -69,21 +70,19 @@ jobs:
           tf_actions_subcommand: 'apply'
           tf_actions_working_dir: './infrastructure'
 
-      # The infrastructure is ready, now we have to perform some additional steps.
-
-      # Get GKE credentials
-      - name: CD - GKE Auth
+      # The infrastructure is ready, perform additional steps.
+      # Update SQL references      
+      - name: PostInfra - Kubernetes Auth
         run: |-
           gcloud container clusters get-credentials "$TF_VAR_GKE_CLUSTER" --zone "$TF_VAR_GKE_ZONE"
-      
-      # Update SQL references
+
       - name: PostInfra - Get SQL IP
         run: |
           sql_ip=$(gcloud sql instances describe eu-demblock-db --format json | jq '.ipAddresses[0].ipAddress' | tr -d '"')
           echo ::set-env name=DB_HOST::$sql_ip
             - uses: actions/checkout@master
   
-      - name: PostInfra - Update SQL references
+      - name: PostInfra - Update SQL refs
         uses: google/secrets-sync-action@v1.1.3
         with: 
           SECRETS: |
@@ -100,7 +99,7 @@ jobs:
           GKE_CLUSTER: $TF_VAR_GKE_CLUSTER
           GKE_ZONE: $TF_VAR_GKE_ZONE
 
-      # Deploy charts
+      # Install charts
       - name: Helm - Install dependency
         run: |
           curl -fsSLo get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -116,7 +115,7 @@ jobs:
           kubectl apply -f ./k8s/prod-cm.yaml
 
       # Bump tag
-      - name: PostInfra - Bump and tag
+      - name: Finally - Bump and tag
         uses: anothrNick/github-tag-action@1.17.2
         env:
           WITH_V: true

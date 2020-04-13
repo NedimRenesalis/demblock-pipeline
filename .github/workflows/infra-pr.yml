@@ -1,4 +1,4 @@
-name: 'TF'
+name: 'Infrastructure - Validate on PR'
 on:
   - pull_request
 

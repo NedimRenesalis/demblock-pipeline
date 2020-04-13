@@ -1,4 +1,4 @@
-name: 'TF'
+name: 'Infrastructure - Destory'
 on: push
 
 env:

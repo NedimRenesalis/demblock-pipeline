@@ -149,10 +149,10 @@ resource "google_sql_database" "demblock_tge_db" {
 # Demblock Persistent Data
 #=======================================================================
 resource "google_compute_disk" "demblock-disk" {
-  name  = "demblock-disk"
-  type  = "pd-standard"
-  zone  = "europe-north1-a"
-  size  = 20
+  name                      = "demblock-disk"
+  type                      = "pd-standard"
+  zone                      = "europe-north1-a"
+  size                      = 20
   physical_block_size_bytes = 4096
 }
 
