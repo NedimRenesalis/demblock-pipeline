@@ -97,80 +97,80 @@ provider "kubernetes" {
 
 # 1) IP ADDRESSES
 resource "google_compute_global_address" "demblock" {
- name = "demblock-static-ip"
+  name = "demblock-global-ip"
 }
 
 resource "google_compute_global_address" "demblock-tge" {
- name = "demblock-tge-static-ip"
+  name = "demblock-tge-global-ip"
 }
 
 resource "google_compute_global_address" "demblock-token" {
- name = "demblock-token-static-ip"
+  name = "demblock-token-global-ip"
 }
 
 #=======================================================================
 # 2) DNS ZONES
 resource "google_dns_managed_zone" "demblock-com" {
- count    = "1"
- dns_name = "demblock.com"
- name     = "demblock"
+  count    = "1"
+  dns_name = "demblock.com"
+  name     = "demblock"
 }
 
 resource "google_dns_managed_zone" "demblock-tge-com" {
- count    = "1"
- dns_name = "demblock-tge.com"
- name     = "demblock-tge"
+  count    = "1"
+  dns_name = "demblock-tge.com"
+  name     = "demblock-tge"
 }
 
 #=======================================================================
 # 3) RECORDS
 resource "google_dns_record_set" "demblock" {
- project      = "demblock"
- managed_zone = "demblock"
- name         = "demblock.com"
- type         = "A"
- ttl          = 300
- rrdatas      = ["${google_compute_global_address.demblock.address}"]
+  project      = "demblock"
+  managed_zone = "demblock"
+  name         = "demblock.com"
+  type         = "A"
+  ttl          = 300
+  rrdatas      = [google_compute_global_address.demblock.address]
 }
 
 resource "google_dns_record_set" "backend-demblock" {
- project      = "demblock"
- managed_zone = "demblock"
- name         = "backend.demblock.com"
- type         = "A"
- ttl          = 300
- rrdatas      = ["${google_compute_global_address.demblock.address}"]
+  project      = "demblock"
+  managed_zone = "demblock"
+  name         = "backend.demblock.com"
+  type         = "A"
+  ttl          = 300
+  rrdatas      = [google_compute_global_address.demblock.address]
 }
 
 #=======================================================================
 
 resource "google_dns_record_set" "demblock-tge" {
- project      = "demblock"
- managed_zone = "demblock-tge"
- name         = "demblock-tge.com"
- type         = "A"
- ttl          = 300
- rrdatas      = ["${google_compute_global_address.demblock-tge.address}"]
+  project      = "demblock"
+  managed_zone = "demblock-tge"
+  name         = "demblock-tge.com"
+  type         = "A"
+  ttl          = 300
+  rrdatas      = [google_compute_global_address.demblock-tge.address]
 }
 
 resource "google_dns_record_set" "backend-demblock-tge" {
- project      = "demblock"
- managed_zone = "demblock-tge"
- name         = "backend.demblock-tge.com"
- type         = "A"
- ttl          = 300
- rrdatas      = ["${google_compute_global_address.demblock-tge.address}"]
+  project      = "demblock"
+  managed_zone = "demblock-tge"
+  name         = "backend.demblock-tge.com"
+  type         = "A"
+  ttl          = 300
+  rrdatas      = [google_compute_global_address.demblock-tge.address]
 }
 
 #=======================================================================
 
 resource "google_dns_record_set" "token-demblock-tge" {
- project      = "demblock"
- managed_zone = "demblock-tge"
- name         = "token.demblock-tge.com"
- type         = "A"
- ttl          = 300
- rrdatas      = ["${google_compute_global_address.demblock-token.address}"]
+  project      = "demblock"
+  managed_zone = "demblock-tge"
+  name         = "token.demblock-tge.com"
+  type         = "A"
+  ttl          = 300
+  rrdatas      = [google_compute_global_address.demblock-token.address]
 }
 
 
