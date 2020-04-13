@@ -24,7 +24,7 @@ jobs:
         env:
           TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
       - name: 'Terraform Init'
         uses: hashicorp/terraform-github-actions@master
@@ -35,7 +35,7 @@ jobs:
         env:
           TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
       - name: 'Terraform Validate'
         uses: hashicorp/terraform-github-actions@master
@@ -46,7 +46,7 @@ jobs:
         env:
           TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
       - name: 'Terraform Plan'
         uses: hashicorp/terraform-github-actions@master
@@ -57,4 +57,4 @@ jobs:
         env:
           TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
           TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
