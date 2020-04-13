@@ -16,7 +16,6 @@ variable "GKE_CLUSTER" {}
 variable "GKE_ZONE" {}
 variable "DB_INSTANCE" {}
 variable "DB_LOCATION" {}
-variable "DOCKER_SECRET" {}
 
 #=======================================================================
 # Google Auth
