@@ -110,9 +110,10 @@ jobs:
       # Deploy cert manager
       - name: Helm - Deploy cert manager
         run: |
-          kubectl apply -f ./k8s/tiller.yaml
-          helm init --service-account tiller
-          helm upgrade --install --wait --atomic --namespace=kube-system stable/cert-manager
+          kubectl create namespace cert-manager
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+          helm upgrade cert-manager --install --wait --atomic --namespace cert-manager jetstack/cert-manager --version v0.14.1
           kubectl apply -f ./k8s/prod-cm.yaml
 
       # Bump tag
