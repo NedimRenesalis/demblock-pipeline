@@ -8,6 +8,7 @@ env:
   TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
   TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
   GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   TF_VAR_GKE_CLUSTER: eu-demblock-cluster
   TF_VAR_GKE_ZONE: europe-north1-a
   TF_VAR_DB_INSTANCE: eu-demblock-db
@@ -33,7 +34,6 @@ jobs:
         run: |-
           gcloud --quiet auth configure-docker
           cp $HOME/.docker/config.json ./infrastructure/config.json
-          echo ::set-env name=DOCKER_PASSWORD::$(echo $GOOGLE_SA_KEY | base64 -w0)
       
       # Deploy infrastructure via Terraform
       - name: 'Infra - Format'
@@ -80,7 +80,7 @@ jobs:
 
       - name: PostInfra - Get SQL IP
         run: |
-          sql_ip=$(gcloud sql instances describe eu-demblock-db --format json | jq '.ipAddresses[0].ipAddress' | tr -d '"')
+          sql_ip=$(gcloud sql instances describe $TF_VAR_DB_INSTANCE --format json | jq '.ipAddresses[0].ipAddress' | sed -e 's/^"//' -e 's/"$//')
           echo ::set-env name=DB_HOST::$sql_ip
             - uses: actions/checkout@master
   
