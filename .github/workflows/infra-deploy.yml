@@ -80,9 +80,8 @@ jobs:
 
       - name: PostInfra - Get SQL IP
         run: |
-          sql_ip=$(gcloud sql instances describe $TF_VAR_DB_INSTANCE --format json | jq '.ipAddresses[0].ipAddress' | sed -e 's/^"//' -e 's/"$//')
+          sql_ip=$(gcloud sql instances describe $TF_VAR_DB_INSTANCE --format json | jq '.ipAddresses[0].ipAddress' | tr -d '"')
           echo ::set-env name=DB_HOST::$sql_ip
-            - uses: actions/checkout@master
   
       - name: PostInfra - Update SQL refs
         uses: google/secrets-sync-action@v1.1.3
