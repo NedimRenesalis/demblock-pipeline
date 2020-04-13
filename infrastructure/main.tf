@@ -1,4 +1,5 @@
-# Terraform state will be stored in google bucket
+#=======================================================================
+# Terraform state will be stored in Google Bucket
 terraform {
   backend "gcs" {
     bucket = "tf-demblock"
@@ -6,17 +7,28 @@ terraform {
   }
 }
 
+#=======================================================================
 # Required vars
+#=======================================================================
 variable "SQL_USER" {}
 variable "SQL_PASSWORD" {}
+variable "GKE_CLUSTER" {}
+variable "GKE_ZONE" {}
+variable "DB_INSTANCE" {}
+variable "DB_LOCATION" {}
+variable "DOCKER_SECRET" {}
 
-# Auth
+#=======================================================================
+# Google Auth
+#=======================================================================
 provider "google" {
   project = "demblock"
   region  = "europe-west1"
 }
 
+#=======================================================================
 # Private network
+#=======================================================================
 resource "google_compute_network" "demblock_network" {
   name = "demblock-shared"
 }
@@ -35,11 +47,13 @@ resource "google_service_networking_connection" "private_vpc_connection" {
   reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
 }
 
+#=======================================================================
 # Kubernetes cluster
+#=======================================================================
 resource "google_container_cluster" "eu_demblock_cluster" {
   project            = "demblock"
-  name               = "eu-demblock-cluster"
-  location           = "europe-north1-a"
+  name               = var.GKE_CLUSTER
+  location           = var.GKE_ZONE
   initial_node_count = 4
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
@@ -58,13 +72,15 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   }
 }
 
+#=======================================================================
 # K8s auth
+#=======================================================================
 data "google_client_config" "default" {
 }
 
 data "google_container_cluster" "demblock-cluster" {
-  name     = "eu-demblock-cluster"
-  location = "europe-north1-a"
+  name     = var.GKE_CLUSTER
+  location = var.GKE_ZONE
 }
 
 provider "kubernetes" {
@@ -76,11 +92,29 @@ provider "kubernetes" {
   )
 }
 
-# PostgreSQL database
+#=======================================================================
+# Depoloy docker secret
+#=======================================================================
+resource "kubernetes_secret" "docker-credentials" {
+  metadata {
+    name      = "pull-docker-creds"
+    namespace = "default"
+  }
+
+  data = {
+    ".dockerconfigjson" = var.DOCKER_SECRET
+  }
+
+  type = "kubernetes.io/dockerconfigjson"
+}
+
+#=======================================================================
+# SQL DBs for Demblock
+#=======================================================================
 resource "google_sql_database_instance" "demblock_db_instance" {
   project = "demblock"
-  name    = "eu-demblock-db"
-  region  = "europe-north1"
+  name    = var.DB_INSTANCE
+  region  = var.DB_LOCATION
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
 
@@ -93,14 +127,12 @@ resource "google_sql_database_instance" "demblock_db_instance" {
   }
 }
 
-# DB User
 resource "google_sql_user" "users" {
   name     = var.SQL_USER
   password = var.SQL_PASSWORD
   instance = google_sql_database_instance.demblock_db_instance.name
 }
 
-# SQL DBs for Demblock
 resource "google_sql_database" "demblock_db" {
   project  = "demblock"
   name     = "demblock"
@@ -113,7 +145,9 @@ resource "google_sql_database" "demblock_tge_db" {
   instance = google_sql_database_instance.demblock_db_instance.name
 }
 
+#=======================================================================
 # Demblock Persistent Data
+#=======================================================================
 resource "google_compute_disk" "demblock-disk" {
   name  = "demblock-disk"
   type  = "pd-standard"

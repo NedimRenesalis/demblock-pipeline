@@ -1,5 +1,15 @@
 name: 'TF'
 on: push
+
+env:
+  TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+  TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
+  TF_VAR_GKE_CLUSTER: eu-demblock-cluster
+  TF_VAR_GKE_ZONE: europe-north1-a
+  TF_VAR_DB_INSTANCE: eu-demblock-db
+  TF_VAR_DB_LOCATION: europe-north1
+
 jobs:
   terraform:
     name: 'Infra - Destroy'
@@ -15,35 +25,23 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_SA_KEY }}
           export_default_credentials: true
 
-      - name: 'Terraform Init'
+      - name: 'Infra - Init'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'init'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
-      - name: 'Terraform Plan'
+      - name: 'Infra - Plan'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'plan'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
-      - name: 'Terraform Destroy'
+      - name: 'Infra - Destroy'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'destroy'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}

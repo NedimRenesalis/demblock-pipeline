@@ -2,71 +2,106 @@ name: 'TF'
 on:
   watch:
     types: [started]
+
+env:
+  TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+  TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
+  TF_VAR_GKE_CLUSTER: eu-demblock-cluster
+  TF_VAR_GKE_ZONE: europe-north1-a
+  TF_VAR_DB_INSTANCE: eu-demblock-db
+  TF_VAR_DB_LOCATION: europe-north1
+  
 jobs:
   terraform:
     name: 'Infra - Deploy'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: 'Google Cloud Auth'
+      - name: 'GCP - Auth'
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
           service_account_email: ${{ secrets.GOOGLE_SA_EMAIL }}
           service_account_key: ${{ secrets.GOOGLE_SA_KEY }}
           export_default_credentials: true
-        
-      - name: 'Terraform Format'
+
+      # helper for authentication
+      - name: 'GCP - Export docker secrets'
+        run: |-
+          gcloud --quiet auth configure-docker
+          echo ::set-env name=TF_VAR_DOCKER_SECRET::$(cat ~/.docker/config.json | base64 -w0)
+          echo ::set-env name=DOCKER_PASSWORD::$(echo $GOOGLE_SA_KEY | base64 -w0)
+          
+
+      - name: 'Infra - Format'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'fmt'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
-      - name: 'Terraform Init'
+      - name: 'Infra - Init'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'init'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
-      - name: 'Terraform Validate'
+      - name: 'Infra - Validate'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'validate'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
-      - name: 'Terraform Plan'
+      - name: 'Infra - Plan'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'plan'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
 
-      - name: 'Terraform Apply'
+      - name: 'Infra - Apply'
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'apply'
           tf_actions_working_dir: './infrastructure'
-        env:
-          TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
-          TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+      # The infrastructure is ready, now we have to perform some additional steps.
+
+      # Get GKE credentials
+      - name: CD - GKE Auth
+        run: |-
+          gcloud container clusters get-credentials "$TF_VAR_GKE_CLUSTER" --zone "$TF_VAR_GKE_ZONE"
+      
+      # Update SQL references
+      - name: PostInfra - Get SQL IP
+        run: |
+          sql_ip=$(gcloud sql instances describe eu-demblock-db --format json | jq '.ipAddresses[0].ipAddress' | tr -d '"')
+          echo ::set-env name=DB_HOST::$sql_ip
+            - uses: actions/checkout@master
+  
+      - name: PostInfra - Update SQL references
+        uses: google/secrets-sync-action@v1.1.3
+        with: 
+          SECRETS: |
+            ^DB_USERNAME$
+            ^DB_PASSWORD$
+            ^DB_HOST$
+            ^DOCKER_PASSWORD$
+            ^GKE_CLUSTER$
+            ^GKE_ZONE$
+          REPOSITORIES: |
+             ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
+        env:
+          GKE_CLUSTER: $TF_VAR_GKE_CLUSTER
+          GKE_ZONE: $TF_VAR_GKE_ZONE
+
+      # Bump tag
+      - name: Bump and push tag
+        uses: anothrNick/github-tag-action@1.17.2
+        env:
+          WITH_V: true
