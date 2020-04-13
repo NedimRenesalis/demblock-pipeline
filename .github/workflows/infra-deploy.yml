@@ -31,7 +31,7 @@ jobs:
       - name: 'GCP - Docker Auth'
         run: |-
           gcloud --quiet auth configure-docker
-          echo ::set-env name=TF_VAR_DOCKER_SECRET::$(cat ~/.docker/config.json | base64 -w0)
+          echo ::set-env name=TF_VAR_DOCKER_SECRET::$(cat ~/.docker/config.json | jq -r 'to_entries[] | .key + "=\"" + (.value|tostring) + "\""')
           echo ::set-env name=DOCKER_PASSWORD::$(echo $GOOGLE_SA_KEY | base64 -w0)
       
       # Deploy infrastructure via Terraform

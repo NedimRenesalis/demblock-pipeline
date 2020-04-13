@@ -102,7 +102,7 @@ resource "kubernetes_secret" "docker-credentials" {
   }
 
   data = {
-    ".dockerconfigjson" = var.DOCKER_SECRET
+    ".dockerconfigjson" = base64encode(var.DOCKER_SECRET)
   }
 
   type = "kubernetes.io/dockerconfigjson"
