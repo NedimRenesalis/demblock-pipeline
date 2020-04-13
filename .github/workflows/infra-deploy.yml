@@ -33,8 +33,7 @@ jobs:
       - name: 'GCP - Docker Auth'
         run: |-
           gcloud --quiet auth configure-docker
-          echo $GOOGLE_SA_KEY | base64 --decode > account.json
-          docker login -u _json_key --password-stdin https://eu.gcr.io < account.json
+          $(echo $GOOGLE_SA_KEY | base64 --decode) | docker login -u _json_key --password-stdin https://eu.gcr.io
           echo $HOME/.docker/config.json
           cp $HOME/.docker/config.json ./infrastructure/config.json
       
