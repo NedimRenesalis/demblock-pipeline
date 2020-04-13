@@ -5,6 +5,7 @@ terraform {
     prefix = "terraform/state"
   }
 }
+
 # Required vars
 variable "SQL_USER" {}
 variable "SQL_PASSWORD" {}
@@ -38,7 +39,7 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 resource "google_container_cluster" "eu_demblock_cluster" {
   project            = "demblock"
   name               = "eu-demblock-cluster"
-  location           = "europe-north1"
+  location           = "europe-north1-a"
   initial_node_count = 2
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
@@ -64,7 +65,7 @@ data "google_client_config" "default" {
 
 data "google_container_cluster" "demblock-cluster" {
   name     = "eu-demblock-cluster"
-  location = "europe-north1"
+  location = "europe-north1-a"
 }
 
 provider "kubernetes" {
