@@ -4,6 +4,7 @@ on:
     types: [started]
 
 env:
+  GCP_PROJECT: demblock
   TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
   TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
   GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
@@ -74,6 +75,7 @@ jobs:
       # Update SQL references      
       - name: PostInfra - Kubernetes Auth
         run: |-
+          gcloud config set project $GCP_PROJECT
           gcloud container clusters get-credentials "$TF_VAR_GKE_CLUSTER" --zone "$TF_VAR_GKE_ZONE"
 
       - name: PostInfra - Get SQL IP
