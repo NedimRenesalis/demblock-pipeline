@@ -159,7 +159,7 @@ resource "google_dns_record_set" "frontend_demblock" {
   name         = "demblock.com."
   type         = "A"
   ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock.address]
+  rrdatas      = [google_compute_address.demblock.address]
 }
 
 resource "google_dns_record_set" "backend_demblock" {
@@ -176,7 +176,7 @@ resource "google_dns_record_set" "frontend_demblock_tge" {
   name         = "demblock-tge.com."
   type         = "A"
   ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock_tge.address]
+  rrdatas      = [google_compute_address.demblock_tge.address]
 }
 
 resource "google_dns_record_set" "backend_demblock_tge" {
@@ -192,7 +192,7 @@ resource "google_dns_record_set" "token_demblock_tge" {
   name         = "token.demblock-tge.com."
   type         = "A"
   ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock_token.address]
+  rrdatas      = [google_compute_address.demblock_token.address]
 }
 
 #=======================================================================
