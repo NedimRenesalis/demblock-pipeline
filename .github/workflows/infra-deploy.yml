@@ -11,6 +11,7 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_CONFIG_JSON: ${{ secrets.DOCKER_CONFIG_JSON }}
   TF_VAR_GKE_CLUSTER: eu-demblock-cluster
+  TF_VAR_GKE_REGION: europe-north1
   TF_VAR_GKE_ZONE: europe-north1-a
   TF_VAR_DB_INSTANCE: eu-demblock-db
   TF_VAR_DB_LOCATION: europe-north1

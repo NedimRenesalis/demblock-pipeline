@@ -14,6 +14,7 @@ variable "SQL_USER" {}
 variable "SQL_PASSWORD" {}
 variable "GKE_CLUSTER" {}
 variable "GKE_ZONE" {}
+variable "GKE_REGION" {}
 variable "DB_INSTANCE" {}
 variable "DB_LOCATION" {}
 
@@ -96,16 +97,19 @@ provider "kubernetes" {
 #=======================================================================
 
 # 1) IP ADDRESSES
-resource "google_compute_global_address" "demblock" {
-  name = "demblock-global-ip"
+resource "google_compute_address" "demblock" {
+  name   = "demblock-global-ip"
+  region = var.GKE_REGION
 }
 
-resource "google_compute_global_address" "demblock_tge" {
-  name = "demblock-tge-global-ip"
+resource "google_compute_address" "demblock_tge" {
+  name   = "demblock-tge-global-ip"
+  region = var.GKE_REGION
 }
 
-resource "google_compute_global_address" "demblock_token" {
-  name = "demblock-token-global-ip"
+resource "google_compute_address" "demblock_token" {
+  name   = "demblock-token-global-ip"
+  region = var.GKE_REGION
 }
 
 #=======================================================================
