@@ -133,9 +133,9 @@ resource "google_dns_record_set" "frontend_demblock" {
 resource "google_dns_record_set" "backend_demblock" {
   managed_zone = google_dns_managed_zone.demblock_com.name
   name         = "backend.demblock.com."
-  type         = "A"
+  type         = "CNAME"
   ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock.address]
+  rrdatas      = ["demblock.com."]
 }
 
 ##=======================================================================
@@ -150,9 +150,9 @@ resource "google_dns_record_set" "frontend_demblock_tge" {
 resource "google_dns_record_set" "backend_demblock_tge" {
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
   name         = "backend.demblock-tge.com."
-  type         = "A"
+  type         = "CNAME"
   ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock_tge.address]
+  rrdatas      = ["demblock-tge.com."]
 }
 
 resource "google_dns_record_set" "token_demblock_tge" {
