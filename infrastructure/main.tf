@@ -98,15 +98,15 @@ provider "kubernetes" {
 
 # 1) IP ADDRESSES
 resource "google_compute_global_address" "demblock" {
-  name   = "demblock-global-ip"
+  name = "demblock-global-ip"
 }
 
 resource "google_compute_global_address" "demblock_tge" {
-  name   = "demblock-tge-global-ip"
+  name = "demblock-tge-global-ip"
 }
 
 resource "google_compute_global_address" "demblock_token" {
-  name   = "demblock-token-global-ip"
+  name = "demblock-token-global-ip"
 }
 
 #=======================================================================
