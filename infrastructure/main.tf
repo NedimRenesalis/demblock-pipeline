@@ -111,8 +111,9 @@ resource "google_compute_global_address" "demblock_token" {
 #=======================================================================
 # 2) DNS ZONES
 resource "google_dns_managed_zone" "demblock_com" {
-  dns_name     = "demblock.com."
-  name         = "zone-demblock"
+  dns_name = "demblock.com."
+  name     = "zone-demblock"
+
   name_servers = [
     "ns-cloud-c1.googledomains.com.",
     "ns-cloud-c2.googledomains.com.",
@@ -122,8 +123,9 @@ resource "google_dns_managed_zone" "demblock_com" {
 }
 
 resource "google_dns_managed_zone" "demblock_tge_com" {
-  dns_name     = "demblock-tge.com."
-  name         = "zone-demblock-tge"
+  dns_name = "demblock-tge.com."
+  name     = "zone-demblock-tge"
+
   name_servers = [
     "ns-cloud-c1.googledomains.com.",
     "ns-cloud-c2.googledomains.com.",
