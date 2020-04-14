@@ -127,6 +127,8 @@ jobs:
 
       - name: Helm - Deploy Ingress controller
         run: |
+          helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+          helm repo update
           helm upgrade nginx-ingress --install --wait --timeout 15m0s --atomic --namespace default stable/nginx-ingress --set rbac.create=true
 
       # Bump tag
