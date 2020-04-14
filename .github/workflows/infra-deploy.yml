@@ -125,6 +125,10 @@ jobs:
           helm upgrade cert-manager --install --wait --timeout 15m0s --atomic --namespace cert-manager jetstack/cert-manager --version v0.14.1
           kubectl apply -f ./k8s/prod-cm.yaml
 
+      - name: Helm - Deploy Ingress controller
+        run: |
+          helm upgrade nginx-ingress --install --wait --timeout 15m0s --atomic --namespace default stable/nginx-ingress --set rbac.create=true
+
       # Bump tag
       - name: Finally - Bump and tag
         uses: anothrNick/github-tag-action@1.17.2
