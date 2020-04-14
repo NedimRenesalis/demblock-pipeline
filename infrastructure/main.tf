@@ -139,7 +139,7 @@ resource "google_dns_record_set" "demblock_ns" {
   name         = "demblock.com."
   type         = "NS"
   ttl          = 300
-  rrdatas      = [
+  rrdatas = [
     "ns-cloud-c1.googledomains.com.",
     "ns-cloud-c2.googledomains.com.",
     "ns-cloud-c3.googledomains.com.",
@@ -152,7 +152,7 @@ resource "google_dns_record_set" "demblock_com_ns" {
   name         = "demblock.com."
   type         = "NS"
   ttl          = 300
-  rrdatas      = [
+  rrdatas = [
     "ns-cloud-c1.googledomains.com.",
     "ns-cloud-c2.googledomains.com.",
     "ns-cloud-c3.googledomains.com.",
