@@ -122,7 +122,7 @@ resource "google_dns_managed_zone" "demblock_tge_com" {
 
 resource "google_dns_record_set" "demblock_ns" {
   managed_zone = google_dns_managed_zone.demblock_com.name
-  name         = "demblock.com."
+  name         = "demblock.com"
   type         = "NS"
   ttl          = 300
   rrdatas = [
@@ -135,7 +135,7 @@ resource "google_dns_record_set" "demblock_ns" {
 
 resource "google_dns_record_set" "demblock_com_ns" {
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
-  name         = "demblock.com."
+  name         = "demblock-tge.com"
   type         = "NS"
   ttl          = 300
   rrdatas = [
