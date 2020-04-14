@@ -120,31 +120,33 @@ resource "google_dns_managed_zone" "demblock_tge_com" {
   name     = "zone-demblock-tge"
 }
 
-resource "google_dns_record_set" "demblock_ns" {
-  managed_zone = google_dns_managed_zone.demblock_com.name
-  name         = "demblock.com"
-  type         = "NS"
-  ttl          = 300
-  rrdatas = [
-    "ns-cloud-c1.googledomains.com.",
-    "ns-cloud-c2.googledomains.com.",
-    "ns-cloud-c3.googledomains.com.",
-    "ns-cloud-c4.googledomains.com."
-  ]
-}
-
-resource "google_dns_record_set" "demblock_com_ns" {
-  managed_zone = google_dns_managed_zone.demblock_tge_com.name
-  name         = "demblock-tge.com"
-  type         = "NS"
-  ttl          = 300
-  rrdatas = [
-    "ns-cloud-c1.googledomains.com.",
-    "ns-cloud-c2.googledomains.com.",
-    "ns-cloud-c3.googledomains.com.",
-    "ns-cloud-c4.googledomains.com."
-  ]
-}
+# resource "google_dns_record_set" "demblock_ns" {
+#   count        = 1
+#   managed_zone = google_dns_managed_zone.demblock_com.name
+#   name         = "demblock.com."
+#   type         = "NS"
+#   ttl          = 300
+#   rrdatas = [
+#     "ns-cloud-c1.googledomains.com.",
+#     "ns-cloud-c2.googledomains.com.",
+#     "ns-cloud-c3.googledomains.com.",
+#     "ns-cloud-c4.googledomains.com."
+#   ]
+# }
+# 
+# resource "google_dns_record_set" "demblock_com_ns" {
+#   count        = 1
+#   managed_zone = google_dns_managed_zone.demblock_tge_com.name
+#   name         = "demblock-tge.com."
+#   type         = "NS"
+#   ttl          = 300
+#   rrdatas = [
+#     "ns-cloud-c1.googledomains.com.",
+#     "ns-cloud-c2.googledomains.com.",
+#     "ns-cloud-c3.googledomains.com.",
+#     "ns-cloud-c4.googledomains.com."
+#   ]
+# }
 
 #=======================================================================
 # 3) RECORDS
