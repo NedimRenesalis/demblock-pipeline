@@ -1,23 +1,36 @@
-name: 'Infrastructure - Destory'
+name: 'Infrastructure'
+# =================================================================
+# Runs when user makes a commit with a "#destroy" message.
 on: push
 
+# =================================================================
+# Initialize environment.
+# =================================================================
 env:
-  TF_VAR_SQL_USER: ${{ secrets.DB_USERNAME }}
+  # Project specific
+  TF_VAR_GKE_CLUSTER : eu-demblock-cluster
+  TF_VAR_GKE_ZONE    : europe-north1-a
+  TF_VAR_DB_INSTANCE : eu-demblock-db
+  TF_VAR_DB_LOCATION : europe-north1
+  TF_VAR_SQL_USER    : ${{ secrets.DB_USERNAME }}
   TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  GITHUB_TOKEN: ${{ secrets.GIT_ACTIONS_TOKEN }}
-  TF_VAR_GKE_CLUSTER: eu-demblock-cluster
-  TF_VAR_GKE_ZONE: europe-north1-a
-  TF_VAR_DB_INSTANCE: eu-demblock-db
-  TF_VAR_DB_LOCATION: europe-north1
+  
+  # User specific
+  GITHUB_TOKEN       : ${{ secrets.GIT_ACTIONS_TOKEN }}
 
 jobs:
-  terraform:
-    name: 'Infra - Destroy'
+  destroy:
+    # =================================================================
+    # Delete deployed infrastructure.
+    # =================================================================
+    name: 'Destroy'
     runs-on: ubuntu-latest
     if: "contains(github.event.head_commit.message, '#destroy')"
     steps:
       - uses: actions/checkout@master
-      - name: 'Google Cloud Auth'
+
+      # Auth Google Services
+      - name: 'Infra - GCP Auth'
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
@@ -25,6 +38,7 @@ jobs:
           service_account_key: ${{ secrets.GOOGLE_SA_KEY }}
           export_default_credentials: true
 
+      # Validate infrastructure code
       - name: 'Infra - Init'
         uses: hashicorp/terraform-github-actions@master
         with:
@@ -39,6 +53,7 @@ jobs:
           tf_actions_subcommand: 'plan'
           tf_actions_working_dir: './infrastructure'
 
+      # Destroy infrastructure via Terraform
       - name: 'Infra - Destroy'
         uses: hashicorp/terraform-github-actions@master
         with:
