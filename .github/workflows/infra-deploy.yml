@@ -97,6 +97,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: terraform
     steps:
+      - uses: actions/checkout@master
+
       # Auth Google Services
       - name: 'K8S - GCP Auth'
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
@@ -135,14 +137,12 @@ jobs:
       # Deploy required secrets
       - name: K8S - Deploy k8s secrets
         run: |-
-          ls
-          sh k8s/secrets.sh
+          ./k8s/secrets.sh
 
       # Deploy required dependencies
       - name: K8S - Deploy k8s dependencies
         run: |-
-          ls
-          sh k8s/k8s_dep.sh
+          ./k8s/k8s_dep.sh
 
       # Bump tag
       - name: K8S - Bump and tag
