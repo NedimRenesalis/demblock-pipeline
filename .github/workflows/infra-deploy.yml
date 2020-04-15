@@ -135,12 +135,14 @@ jobs:
       # Deploy required secrets
       - name: K8S - Deploy k8s secrets
         run: |-
-          ./k8s/secrets.sh
+          ls
+          sh k8s/secrets.sh
 
       # Deploy required dependencies
       - name: K8S - Deploy k8s dependencies
-        run: |
-          ./k8s/k8s_dep.sh
+        run: |-
+          ls
+          sh k8s/k8s_dep.sh
 
       # Bump tag
       - name: K8S - Bump and tag
