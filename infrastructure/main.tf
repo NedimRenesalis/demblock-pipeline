@@ -55,6 +55,8 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   name               = var.GKE_CLUSTER
   location           = var.GKE_ZONE
   initial_node_count = 4
+  min_master_version = "1.15.11-gke.5"
+  node_version       = "1.15.11-gke.5"
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
   network    = google_compute_network.demblock_network.self_link
