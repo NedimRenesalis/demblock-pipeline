@@ -93,17 +93,26 @@ jobs:
   # Create required infrastructure dependencies.
   # =================================================================
   k8s:
-    name: 'Install dependencies'
+    name: 'Kubernetes management'
     runs-on: ubuntu-latest
     needs: terraform
     steps:
+      # Auth Google Services
+      - name: 'K8S - GCP Auth'
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '270.0.0'
+          service_account_email: ${{ secrets.GOOGLE_SA_EMAIL }}
+          service_account_key: ${{ secrets.GOOGLE_SA_KEY }}
+          export_default_credentials: true
+
       # Update SQL references
-      - name: K8S - Kubernetes Auth
+      - name: K8S - Auth
         run: |-
           gcloud config set project $GCP_PROJECT
           gcloud container clusters get-credentials "$TF_VAR_GKE_CLUSTER" --zone "$TF_VAR_GKE_ZONE"
 
-      - name: K8S - Get SQL IP
+      - name: K8S - Obtain SQL IP
         run: |
           sql_ip=$(gcloud sql instances describe $TF_VAR_DB_INSTANCE --format json | jq '.ipAddresses[0].ipAddress' | tr -d '"')
           echo ::set-env name=DB_HOST::$sql_ip
