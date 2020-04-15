@@ -12,21 +12,24 @@ helm upgrade cert-manager --install --wait --timeout 15m0s --atomic --namespace 
 
 # ===================================================
 # CLUSTER ISSUER
-echo "Deploying ClusterIssuer..."
+echo "Deploying Certificates..."
 cat <<EOF | kubectl apply -f -
-apiVersion: cert-manager.io/v1alpha2
-kind: ClusterIssuer
+apiVersion: networking.gke.io/v1beta2
+kind: ManagedCertificate
 metadata:
-  name: letsencrypt-prod
+  name: demblock-certs
 spec:
-  acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
-    email: support@demblock.com
-    privateKeySecretRef:
-      name: letsencrypt-prod
-    solvers:
-    - http01:
-        ingress:
-          class: nginx
-      selector: {}
+  domains:
+    - demblock.com
+    - backend.demblock.com
+---
+apiVersion: networking.gke.io/v1beta2
+kind: ManagedCertificate
+metadata:
+  name: demblock-tge-certs
+spec:
+  domains:
+    - demblock-tge.com
+    - backend.demblock-tge.com
+    - token.demblock-tge.com
 EOF
