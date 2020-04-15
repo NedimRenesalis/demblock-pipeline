@@ -38,7 +38,7 @@ jobs:
   # Deploy required infrastructure.
   # =================================================================
   terraform:
-    name: 'Deploy'
+    name: 'Terraform deploy'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
