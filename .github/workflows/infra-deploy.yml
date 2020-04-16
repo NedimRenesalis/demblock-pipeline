@@ -28,6 +28,10 @@ env:
   
   # ====================
   # REQUIRED
+  DB_USERNAME  : ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD  : ${{ secrets.DB_PASSWORD }}
+  SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+  SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
   # DB_USERNAME
   # DB_PASSWORD
   # SMTP_USERNAME
