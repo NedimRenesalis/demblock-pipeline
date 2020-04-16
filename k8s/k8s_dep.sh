@@ -2,7 +2,7 @@
 # ===================================================
 echo "Deploying required k8s dependencies..."
 # ===================================================
-# CERT MANAGER
+# CERT MANAGER - needed for NGINX INGRESS, we are using GCE Ingress
 # echo "Deploying cert manager..."
 # kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager-legacy.crds.yaml
 # kubectl create namespace cert-manager || echo "Namespace exists."
@@ -13,23 +13,4 @@ echo "Deploying required k8s dependencies..."
 # ===================================================
 # CLUSTER ISSUER
 echo "Deploying Certificates..."
-cat <<EOF | kubectl apply -f -
-apiVersion: networking.gke.io/v1beta2
-kind: ManagedCertificate
-metadata:
-  name: demblock-certs
-spec:
-  domains:
-    - demblock.com
-    - backend.demblock.com
----
-apiVersion: networking.gke.io/v1beta2
-kind: ManagedCertificate
-metadata:
-  name: demblock-tge-certs
-spec:
-  domains:
-    - demblock-tge.com
-    - backend.demblock-tge.com
-    - token.demblock-tge.com
-EOF
+python3 ./k8s/generate_certs.py | kubectl apply -f -
