@@ -11,8 +11,8 @@ metadata:
     name: db-data
 type: Opaque
 data:
-    username: $(echo $DB_USERNAME | base64 -w0)
-    password: $(echo $DB_PASSWORD | base64 -w0)
+    username: $(echo -n $DB_USERNAME | base64)
+    password: $(echo -n $DB_PASSWORD | base64)
 EOF
 
 # ===================================================
@@ -25,8 +25,8 @@ metadata:
     name: smtp-data
 type: Opaque
 data:
-    username: $(echo $SMTP_USERNAME | base64 -w0)
-    password: $(echo $SMTP_PASSWORD | base64 -w0)
+    username: $(echo -n $SMTP_USERNAME | base64)
+    password: $(echo -n $SMTP_PASSWORD | base64)
 EOF
 
 # ===================================================
