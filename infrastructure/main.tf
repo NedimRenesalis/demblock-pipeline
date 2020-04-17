@@ -54,7 +54,7 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   project            = "demblock"
   name               = var.GKE_CLUSTER
   location           = var.GKE_ZONE
-  initial_node_count = 4
+  initial_node_count = 3
   min_master_version = "1.16.8-gke.8"
   node_version       = "1.16.8-gke.8"
 
