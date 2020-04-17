@@ -12,7 +12,7 @@ env:
   TF_VAR_GKE_CLUSTER : eu-demblock-cluster
   TF_VAR_GKE_ZONE    : europe-north1-a
   TF_VAR_GKE_REGION  : europe-north1
-  TF_VAR_DB_INSTANCE : eu-demblock-db
+  TF_VAR_DB_INSTANCE : eu-db-demblock
   TF_VAR_DB_LOCATION : europe-north1
   TF_VAR_SQL_USER    : ${{ secrets.DB_USERNAME }}
   TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}

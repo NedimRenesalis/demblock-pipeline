@@ -10,6 +10,9 @@ terraform {
 #=======================================================================
 # Required vars
 #=======================================================================
+variable "PROJECT" {
+  default = "demblock"
+}
 variable "SQL_USER" {}
 variable "SQL_PASSWORD" {}
 variable "GKE_CLUSTER" {}
@@ -21,19 +24,25 @@ variable "DB_LOCATION" {}
 #=======================================================================
 # Google Auth
 #=======================================================================
-provider "google" {
-  project = "demblock"
-  region  = "europe-west1"
+provider "google-beta" {
+  project = var.PROJECT
+  region  = var.GKE_REGION
 }
+
+data "google_client_config" "default" {
+}
+
 
 #=======================================================================
 # Private network
 #=======================================================================
 resource "google_compute_network" "demblock_network" {
-  name = "demblock-shared"
+  project = var.PROJECT
+  name    = "demblock-shared"
 }
 
 resource "google_compute_global_address" "private_ip_address" {
+  project       = var.PROJECT
   name          = "demblock-private-ip"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
@@ -51,16 +60,17 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 # Kubernetes cluster
 #=======================================================================
 resource "google_container_cluster" "eu_demblock_cluster" {
-  project            = "demblock"
-  name               = var.GKE_CLUSTER
-  location           = var.GKE_ZONE
-  initial_node_count = 3
-  min_master_version = "1.16.8-gke.8"
+    provider           = google-beta
+    project            = var.PROJECT
+    name               = var.GKE_CLUSTER
+    location           = var.GKE_ZONE
+    initial_node_count = 3
+    min_master_version = "1.16.8-gke.8"
   # node_version       = "1.16.8-gke.8"
 
-  # release_channel {
-  #  channel = "RAPID"
-  # }
+  release_channel {
+    channel = "RAPID"
+  }
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
   network    = google_compute_network.demblock_network.self_link
@@ -79,61 +89,46 @@ resource "google_container_cluster" "eu_demblock_cluster" {
 }
 
 #=======================================================================
-# K8s auth
-#=======================================================================
-data "google_client_config" "default" {
-}
-
-data "google_container_cluster" "demblock-cluster" {
-  name     = var.GKE_CLUSTER
-  location = var.GKE_ZONE
-}
-
-provider "kubernetes" {
-  load_config_file = false
-  host             = "https://${data.google_container_cluster.demblock-cluster.endpoint}"
-  token            = data.google_client_config.default.access_token
-  cluster_ca_certificate = base64decode(
-    data.google_container_cluster.demblock-cluster.master_auth.0.cluster_ca_certificate,
-  )
-}
-
-#=======================================================================
 # Global IPs for services
 #=======================================================================
 
 # 1) IP ADDRESSES
 resource "google_compute_global_address" "demblock" {
-  name = "demblock-global-ip"
+  project = var.PROJECT
+  name    = "demblock-global-ip"
 }
 
 resource "google_compute_global_address" "demblock_tge" {
-  name = "demblock-tge-global-ip"
+  project = var.PROJECT
+  name    = "demblock-tge-global-ip"
 }
 
 resource "google_compute_global_address" "demblock_token" {
-  name = "demblock-token-global-ip"
+  project = var.PROJECT
+  name    = "demblock-token-global-ip"
 }
 
 #=======================================================================
 # 2) DNS ZONES
 resource "google_dns_managed_zone" "demblock_com" {
+  project  = var.PROJECT
   dns_name = "demblock.com."
   name     = "zone-demblock"
 }
 
 resource "google_dns_managed_zone" "demblock_tge_com" {
+  project  = var.PROJECT
   dns_name = "demblock-tge.com."
   name     = "zone-demblock-tge"
 }
 
 # resource "google_dns_record_set" "demblock_ns" {
-#   count        = 1
-#   managed_zone = google_dns_managed_zone.demblock_com.name
-#   name         = "demblock.com."
-#   type         = "NS"
-#   ttl          = 300
-#   rrdatas = [
+# count        = 1
+# managed_zone = google_dns_managed_zone.demblock_com.name
+# name         = "demblock.com."
+# type         = "NS"
+# ttl          = 300
+# rrdatas      = [
 #     "ns-cloud-c1.googledomains.com.",
 #     "ns-cloud-c2.googledomains.com.",
 #     "ns-cloud-c3.googledomains.com.",
@@ -142,12 +137,12 @@ resource "google_dns_managed_zone" "demblock_tge_com" {
 # }
 # 
 # resource "google_dns_record_set" "demblock_com_ns" {
-#   count        = 1
-#   managed_zone = google_dns_managed_zone.demblock_tge_com.name
-#   name         = "demblock-tge.com."
-#   type         = "NS"
-#   ttl          = 300
-#   rrdatas = [
+# count        = 1
+# managed_zone = google_dns_managed_zone.demblock_tge_com.name
+# name         = "demblock-tge.com."
+# type         = "NS"
+# ttl          = 300
+# rrdatas      = [
 #     "ns-cloud-c1.googledomains.com.",
 #     "ns-cloud-c2.googledomains.com.",
 #     "ns-cloud-c3.googledomains.com.",
@@ -158,6 +153,7 @@ resource "google_dns_managed_zone" "demblock_tge_com" {
 #=======================================================================
 # 3) RECORDS
 resource "google_dns_record_set" "frontend_demblock" {
+  project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_com.name
   name         = "demblock.com."
   type         = "A"
@@ -166,6 +162,7 @@ resource "google_dns_record_set" "frontend_demblock" {
 }
 
 resource "google_dns_record_set" "backend_demblock" {
+  project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_com.name
   name         = "backend.demblock.com."
   type         = "CNAME"
@@ -175,6 +172,7 @@ resource "google_dns_record_set" "backend_demblock" {
 
 ##=======================================================================
 resource "google_dns_record_set" "frontend_demblock_tge" {
+  project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
   name         = "demblock-tge.com."
   type         = "A"
@@ -183,6 +181,7 @@ resource "google_dns_record_set" "frontend_demblock_tge" {
 }
 
 resource "google_dns_record_set" "backend_demblock_tge" {
+  project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
   name         = "backend.demblock-tge.com."
   type         = "CNAME"
@@ -191,6 +190,7 @@ resource "google_dns_record_set" "backend_demblock_tge" {
 }
 
 resource "google_dns_record_set" "token_demblock_tge" {
+  project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
   name         = "token.demblock-tge.com."
   type         = "A"
@@ -202,7 +202,7 @@ resource "google_dns_record_set" "token_demblock_tge" {
 # SQL DBs for Demblock
 #=======================================================================
 resource "google_sql_database_instance" "demblock_db_instance" {
-  project = "demblock"
+  project = var.PROJECT
   name    = var.DB_INSTANCE
   region  = var.DB_LOCATION
 
@@ -218,19 +218,20 @@ resource "google_sql_database_instance" "demblock_db_instance" {
 }
 
 resource "google_sql_user" "users" {
+  project  = var.PROJECT
   name     = var.SQL_USER
   password = var.SQL_PASSWORD
   instance = google_sql_database_instance.demblock_db_instance.name
 }
 
 resource "google_sql_database" "demblock_db" {
-  project  = "demblock"
-  name     = "demblock"
+  project  = var.PROJECT
+  name     = var.PROJECT
   instance = google_sql_database_instance.demblock_db_instance.name
 }
 
 resource "google_sql_database" "demblock_tge_db" {
-  project  = "demblock"
+  project  = var.PROJECT
   name     = "demblock-tge"
   instance = google_sql_database_instance.demblock_db_instance.name
 }
@@ -239,43 +240,10 @@ resource "google_sql_database" "demblock_tge_db" {
 # Demblock Persistent Data
 #=======================================================================
 resource "google_compute_disk" "demblock-disk" {
+  project                   = var.PROJECT
   name                      = "demblock-disk"
   type                      = "pd-standard"
-  zone                      = "europe-north1-a"
+  zone                      = var.GKE_ZONE
   size                      = 20
   physical_block_size_bytes = 4096
-}
-
-resource "kubernetes_persistent_volume" "demblock-volume" {
-  metadata {
-    name = "demblock-pv"
-  }
-  spec {
-    capacity = {
-      storage = "15Gi"
-    }
-    access_modes       = ["ReadWriteMany"]
-    storage_class_name = "standard"
-    persistent_volume_source {
-      gce_persistent_disk {
-        pd_name = "demblock-disk"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "demblock-pvc" {
-  metadata {
-    name = "demblock-pvc"
-  }
-  spec {
-    access_modes       = ["ReadWriteMany"]
-    storage_class_name = "standard"
-    resources {
-      requests = {
-        storage = "15Gi"
-      }
-    }
-    volume_name = kubernetes_persistent_volume.demblock-volume.metadata.0.name
-  }
 }

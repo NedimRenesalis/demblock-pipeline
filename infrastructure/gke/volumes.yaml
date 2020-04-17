@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: demblock-pv
+spec:
+  capacity:
+    storage: 15Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: standard
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    namespace: default
+    name: demblock-pvc
+  gcePersistentDisk:
+    pdName: demblock-disk
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demblock-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 15Gi
+  storageClassName: standard

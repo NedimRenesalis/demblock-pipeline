@@ -1,7 +1,5 @@
 #!/bin/sh
 # ===================================================
-echo "Deploying required k8s dependencies..."
-# ===================================================
 # CERT MANAGER - needed for NGINX INGRESS, we are using GCE Ingress
 # echo "Deploying cert manager..."
 # kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager-legacy.crds.yaml

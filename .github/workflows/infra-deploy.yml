@@ -16,7 +16,7 @@ env:
   TF_VAR_GKE_CLUSTER : eu-demblock-cluster
   TF_VAR_GKE_REGION  : europe-north1
   TF_VAR_GKE_ZONE    : europe-north1-a
-  TF_VAR_DB_INSTANCE : eu-demblock-db
+  TF_VAR_DB_INSTANCE : eu-db-demblock
   TF_VAR_DB_LOCATION : europe-north1
   TF_VAR_SQL_USER    : ${{ secrets.DB_USERNAME }}
   TF_VAR_SQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -85,6 +85,13 @@ jobs:
           tf_actions_version: 0.12.24
           tf_actions_subcommand: 'plan'
           tf_actions_working_dir: './infrastructure'
+  
+      # Update SQL references
+      - name: Infra - Deploy K8S infra
+        run: |-
+          gcloud config set project $GCP_PROJECT
+          gcloud container clusters get-credentials "$TF_VAR_GKE_CLUSTER" --zone "$TF_VAR_GKE_ZONE"
+          kubectl apply -f ./infrastructure/gke/volumes.yaml
 
      # - name: 'Infra - Apply'
      #   uses: hashicorp/terraform-github-actions@master
