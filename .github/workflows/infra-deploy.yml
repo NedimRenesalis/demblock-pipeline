@@ -86,19 +86,19 @@ jobs:
           tf_actions_subcommand: 'plan'
           tf_actions_working_dir: './infrastructure'
   
-      # Update SQL references
-      - name: Infra - Deploy K8S infra
+      - name: 'Infra - Apply'
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.24
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: './infrastructure'
+
+      # Update K8S infra
+      - name: Infra - Deploy K8S
         run: |-
           gcloud config set project $GCP_PROJECT
           gcloud container clusters get-credentials "$TF_VAR_GKE_CLUSTER" --zone "$TF_VAR_GKE_ZONE"
           kubectl apply -f ./infrastructure/gke/volumes.yaml
-
-     # - name: 'Infra - Apply'
-     #   uses: hashicorp/terraform-github-actions@master
-     #   with:
-     #     tf_actions_version: 0.12.24
-     #     tf_actions_subcommand: 'apply'
-     #     tf_actions_working_dir: './infrastructure'
   
   # =================================================================
   # Create required infrastructure dependencies.
