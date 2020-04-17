@@ -5,7 +5,7 @@ metadata:
 spec:
   domains:
     - demblock.com
-    - '*.demblock.com'
+    - backend.demblock.com
 ---
 apiVersion: networking.gke.io/v1beta2
 kind: ManagedCertificate
@@ -14,5 +14,6 @@ metadata:
 spec:
   domains:
     - demblock-tge.com
-    - '*.demblock-tge.com'
+    - backend.demblock-tge.com
+    - token.demblock-tge.com
 ---
