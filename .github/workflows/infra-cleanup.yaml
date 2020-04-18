@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Cleanup Pipeline
 on:
   # Run every day at 2:30 AM
   schedule:
