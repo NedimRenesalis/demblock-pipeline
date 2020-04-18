@@ -2,19 +2,25 @@
 # This script deletes Google Cloud registry images.
 # 
 # Requirement: logged in and configured GCP project
-IMAGE="eu.gcr.io/demblock/demblock"
+# Arguments:
+#       $1 - Image
+#       $2 - Keep last (last images to keep)
+IMAGE=$1
+TO_KEEP=$2
 
-COUNTALL="$(gcloud container images list-tags ${IMAGE} --limit=999999 --sort-by=TIMESTAMP  | grep -v DIGEST | wc -l)"
-C=0
+C=1
+COUNTALL="$(gcloud container images list-tags ${IMAGE} --limit=999999 --sort-by=TIMESTAMP --format='get(tags)' | grep -v DIGEST | wc -l)"
+TO_DELETE=`expr $COUNTALL - $TO_KEEP`
 
-for digest in $(gcloud container images list-tags ${IMAGE} --limit=999999 --sort-by=TIMESTAMP --format='get(tags)'); do
-
-    if [ $COUNTALL-$C ]
+for digest in $(gcloud container images list-tags ${IMAGE} --limit=999999 --sort-by=TIMESTAMP --format='get(digest)'); do
+    if [ "$C" -gt "$TO_DELETE" ]
     then
-        echo ${IMAGE}@${digest}
-        # gcloud container images delete -q --force-delete-tags "${IMAGE}@${digest}"
-        C=$C+1
+        echo "[SKIP] Image ${IMAGE}@${digest}"
     else
-        echo "Deleted $( $C - 1 ) images in ${IMAGE}."
+        echo "[DELETE] Image ${IMAGE}"
+        gcloud container images delete -q --force-delete-tags "${IMAGE}@${digest}"
     fi 
+    C=$(( $C + 1 ))
 done
+
+echo "\n[STATS] Total number of cleaned images: $TO_DELETE/$COUNTALL\n"

@@ -1,0 +1,63 @@
+name: CI/CD Pipeline
+on:
+  # Run every day at 2:30 AM
+  schedule:
+    - cron:  '30 2 * * *'
+
+# ========================================================
+env:
+  # Project shared
+  GCP_PROJECT   : demblock
+  GOOGLE_REPO   : eu.gcr.io
+  GKE_CLUSTER   : ${{ secrets.GKE_CLUSTER }}
+  GKE_ZONE      : ${{ secrets.GKE_ZONE }}
+  IMAGE_A       : demblock
+  IMAGE_B       : demblock-tge
+  IMAGE_C       : demblock-token
+  KEEP_IMAGES   : 5
+
+  # Consts
+  CHART_PATH: "./k8s"
+  KUBECONFIG: ./kube/config
+
+  #### Also required:
+  # GOOGLE_SA_EMAIL
+  # GOOGLE_SA_KEY
+  # GIT_AUTH_TOKEN
+
+jobs:
+  # ========================================================
+  # ============= CD WORKFLOW
+  # ========================================================
+  cleanup:
+    name: 'Infrastructure cleanup'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Auth Google Services
+    - name: 'Infra - GCP Auth'
+      uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        version: '270.0.0'
+        service_account_email: ${{ secrets.GOOGLE_SA_EMAIL }}
+        service_account_key: ${{ secrets.GOOGLE_SA_KEY }}
+        export_default_credentials: true
+
+    # Get GKE credentials
+    - name: Infra - GKE Auth
+      run: |-
+        gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+    # Update chart
+    - name: Infra - Registry cleanup
+      run: |
+        echo "Cleaning up images $GOOGLE_REPO/$GCP_PROJECT/$IMAGE_A"
+        ./cleanup/gce_images.sh $GOOGLE_REPO/$GCP_PROJECT/$IMAGE_A $KEEP_IMAGES
+        
+        echo "Cleaning up images $GOOGLE_REPO/$GCP_PROJECT/$IMAGE_B"
+        ./cleanup/gce_images.sh $GOOGLE_REPO/$GCP_PROJECT/$IMAGE_B $KEEP_IMAGES
+
+        echo "Cleaning up images $GOOGLE_REPO/$GCP_PROJECT/$IMAGE_C"
+        ./cleanup/gce_images.sh $GOOGLE_REPO/$GCP_PROJECT/$IMAGE_C $KEEP_IMAGES
