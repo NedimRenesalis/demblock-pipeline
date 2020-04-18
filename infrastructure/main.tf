@@ -103,11 +103,6 @@ resource "google_compute_global_address" "demblock_tge" {
   name    = "demblock-tge-global-ip"
 }
 
-resource "google_compute_global_address" "demblock_token" {
-  project = var.PROJECT
-  name    = "demblock-token-global-ip"
-}
-
 #=======================================================================
 # 2) DNS ZONES
 resource "google_dns_managed_zone" "demblock_com" {
@@ -193,9 +188,9 @@ resource "google_dns_record_set" "token_demblock_tge" {
   project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
   name         = "token.demblock-tge.com."
-  type         = "A"
+  type         = "CNAME"
   ttl          = 300
-  rrdatas      = [google_compute_global_address.demblock_token.address]
+  rrdatas      = ["demblock-tge.com."]
 }
 
 #=======================================================================
