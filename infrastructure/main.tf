@@ -156,10 +156,28 @@ resource "google_dns_record_set" "frontend_demblock" {
   rrdatas      = [google_compute_global_address.demblock.address]
 }
 
+resource "google_dns_record_set" "www_frontend_demblock" {
+  project      = var.PROJECT
+  managed_zone = google_dns_managed_zone.demblock_com.name
+  name         = "www.demblock.com."
+  type         = "CNAME"
+  ttl          = 300
+  rrdatas      = ["demblock.com."]
+}
+
 resource "google_dns_record_set" "backend_demblock" {
   project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_com.name
   name         = "backend.demblock.com."
+  type         = "CNAME"
+  ttl          = 300
+  rrdatas      = ["demblock.com."]
+}
+
+resource "google_dns_record_set" "www_backend_demblock" {
+  project      = var.PROJECT
+  managed_zone = google_dns_managed_zone.demblock_com.name
+  name         = "www.backend.demblock.com."
   type         = "CNAME"
   ttl          = 300
   rrdatas      = ["demblock.com."]
@@ -175,6 +193,15 @@ resource "google_dns_record_set" "frontend_demblock_tge" {
   rrdatas      = [google_compute_global_address.demblock_tge.address]
 }
 
+resource "google_dns_record_set" "www_frontend_demblock_tge" {
+  project      = var.PROJECT
+  managed_zone = google_dns_managed_zone.demblock_tge_com.name
+  name         = "www.demblock-tge.com."
+  type         = "CNAME"
+  ttl          = 300
+  rrdatas      = ["demblock-tge.com."]
+}
+
 resource "google_dns_record_set" "backend_demblock_tge" {
   project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
@@ -184,10 +211,28 @@ resource "google_dns_record_set" "backend_demblock_tge" {
   rrdatas      = ["demblock-tge.com."]
 }
 
+resource "google_dns_record_set" "www_backend_demblock_tge" {
+  project      = var.PROJECT
+  managed_zone = google_dns_managed_zone.demblock_tge_com.name
+  name         = "www.backend.demblock-tge.com."
+  type         = "CNAME"
+  ttl          = 300
+  rrdatas      = ["demblock-tge.com."]
+}
+
 resource "google_dns_record_set" "token_demblock_tge" {
   project      = var.PROJECT
   managed_zone = google_dns_managed_zone.demblock_tge_com.name
   name         = "token.demblock-tge.com."
+  type         = "CNAME"
+  ttl          = 300
+  rrdatas      = ["demblock-tge.com."]
+}
+
+resource "google_dns_record_set" "www_token_demblock_tge" {
+  project      = var.PROJECT
+  managed_zone = google_dns_managed_zone.demblock_tge_com.name
+  name         = "www.token.demblock-tge.com."
   type         = "CNAME"
   ttl          = 300
   rrdatas      = ["demblock-tge.com."]
