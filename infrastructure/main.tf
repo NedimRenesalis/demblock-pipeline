@@ -65,7 +65,7 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   name               = var.GKE_CLUSTER
   location           = var.GKE_ZONE
   initial_node_count = 2
-  min_master_version = "1.16.8-gke.8"
+  min_master_version = "1.17.4-gke.10"
   logging_service    = "none" # logging.googleapis.com/kubernetes
   monitoring_service = "none" # monitoring.googleapis.com/kubernetes
 
