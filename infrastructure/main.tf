@@ -77,7 +77,7 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   network    = google_compute_network.demblock_network.self_link
   node_config {
     machine_type = "g1-small"
-    disk_size_gb = "50"
+    disk_size_gb = "20"
     preemptible  = true
 
     taint {
