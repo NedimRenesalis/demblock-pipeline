@@ -79,7 +79,12 @@ resource "google_container_cluster" "eu_demblock_cluster" {
     machine_type = "g1-small"
     disk_size_gb = "50"
     preemptible  = true
-    taint        = ["NO_SCHEDULE task=preemptive"]
+
+    taint {
+      key    = "task"
+      value  = "preemptive"
+      effect = "NO_SCHEDULE"
+    }
   }
 
   ip_allocation_policy {
