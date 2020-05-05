@@ -125,6 +125,11 @@ jobs:
           gcloud config set project $GCP_PROJECT
           gcloud container clusters get-credentials "$TF_VAR_GKE_CLUSTER" --zone "$TF_VAR_GKE_ZONE"
 
+      - name: K8S - Autoscaling
+        run: |-
+          gcloud container clusters update "$TF_VAR_GKE_CLUSTER" --enable-autoscaling \
+            --min-nodes 1 --max-nodes 2 --zone "$TF_VAR_GKE_ZONE" --node-pool default-pool
+
       - name: K8S - Obtain SQL IP
         run: |
           sql_ip=$(gcloud sql instances describe $TF_VAR_DB_INSTANCE --format json | jq '.ipAddresses[0].ipAddress' | tr -d '"')
