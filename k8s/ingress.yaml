@@ -1,0 +1,72 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: demblock-ingress
+  labels:
+    app: demblock-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "demblock-global"
+    networking.gke.io/managed-certificates: "demblock-certs"
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  rules:
+    - host: demblock.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock
+            servicePort: demblock-frontend
+    - host: backend.demblock.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock
+            servicePort: demblock-backend
+    - host: www.demblock.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock
+            servicePort: demblock-frontend
+    - host: www.backend.demblock.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock
+            servicePort: demblock-backend
+    - host: demblock-tge.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock-tge
+            servicePort: demblock-tge-frontend
+    - host: backend.demblock-tge.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock-tge
+            servicePort: demblock-tge-backend
+    - host: token.demblock-tge.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock-token
+            servicePort: demblock-token-dapp
+    - host: www.demblock-tge.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock-tge
+            servicePort: demblock-tge-frontend
+    - host: www.backend.demblock-tge.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock-tge
+            servicePort: demblock-tge-backend
+    - host: www.token.demblock-tge.com
+      http:
+        paths:
+        - backend:
+            serviceName: demblock-token
+            servicePort: demblock-token-dapp

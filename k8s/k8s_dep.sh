@@ -13,6 +13,10 @@
 echo "Deploying Certificates..."
 kubectl apply -f ./k8s/certs.yaml
 
+# INGRESS
+echo "Deploying Ingress..."
+kubectl apply -f ./k8s/ingress.yaml
+
 # OUTDATED VERSIONS
 # =================
 # kubectl apply -f ./k8s/prod-cm.yaml

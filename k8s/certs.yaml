@@ -1,3 +1,22 @@
+# apiVersion: networking.gke.io/v1beta2
+# kind: ManagedCertificate
+# metadata:
+#   name: demblock-certs
+# spec:
+#   domains:
+#     - demblock.com
+#     - backend.demblock.com
+# ---
+# apiVersion: networking.gke.io/v1beta2
+# kind: ManagedCertificate
+# metadata:
+#   name: demblock-tge-certs
+# spec:
+#   domains:
+#     - demblock-tge.com
+#     - backend.demblock-tge.com
+#     - token.demblock-tge.com
+# ---
 apiVersion: networking.gke.io/v1beta2
 kind: ManagedCertificate
 metadata:
@@ -6,14 +25,6 @@ spec:
   domains:
     - demblock.com
     - backend.demblock.com
----
-apiVersion: networking.gke.io/v1beta2
-kind: ManagedCertificate
-metadata:
-  name: demblock-tge-certs
-spec:
-  domains:
     - demblock-tge.com
     - backend.demblock-tge.com
     - token.demblock-tge.com
----
