@@ -5,7 +5,7 @@ metadata:
   labels:
     app: demblock-ingress
   annotations:
-    kubernetes.io/ingress.global-static-ip-name: "demblock-global"
+    kubernetes.io/ingress.global-static-ip-name: "demblock-global-ip"
     networking.gke.io/managed-certificates: "demblock-certs"
     kubernetes.io/ingress.allow-http: "false"
 spec:
