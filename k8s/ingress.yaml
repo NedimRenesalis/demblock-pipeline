@@ -15,58 +15,58 @@ spec:
         paths:
         - backend:
             serviceName: demblock
-            servicePort: demblock-frontend
+            servicePort: 21080
     - host: backend.demblock.com
       http:
         paths:
         - backend:
             serviceName: demblock
-            servicePort: demblock-backend
+            servicePort: 20080
     - host: www.demblock.com
       http:
         paths:
         - backend:
             serviceName: demblock
-            servicePort: demblock-frontend
+            servicePort: 21080
     - host: www.backend.demblock.com
       http:
         paths:
         - backend:
             serviceName: demblock
-            servicePort: demblock-backend
+            servicePort: 20080
     - host: demblock-tge.com
       http:
         paths:
         - backend:
             serviceName: demblock-tge
-            servicePort: demblock-tge-frontend
+            servicePort: 21080
     - host: backend.demblock-tge.com
       http:
         paths:
         - backend:
             serviceName: demblock-tge
-            servicePort: demblock-tge-backend
+            servicePort: 20080
     - host: token.demblock-tge.com
       http:
         paths:
         - backend:
             serviceName: demblock-token
-            servicePort: demblock-token-dapp
+            servicePort: 3000
     - host: www.demblock-tge.com
       http:
         paths:
         - backend:
             serviceName: demblock-tge
-            servicePort: demblock-tge-frontend
+            servicePort: 21080
     - host: www.backend.demblock-tge.com
       http:
         paths:
         - backend:
             serviceName: demblock-tge
-            servicePort: demblock-tge-backend
+            servicePort: 20080
     - host: www.token.demblock-tge.com
       http:
         paths:
         - backend:
             serviceName: demblock-token
-            servicePort: demblock-token-dapp
+            servicePort: 3000
