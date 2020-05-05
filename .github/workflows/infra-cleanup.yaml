@@ -48,6 +48,7 @@ jobs:
     # Get GKE credentials
     - name: Infra - GKE Auth
       run: |-
+        gcloud config set project $GCP_PROJECT
         gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
 
     # Update chart
