@@ -79,7 +79,7 @@ resource "google_container_cluster" "eu_demblock_cluster" {
     machine_type = "g1-small"
     disk_size_gb = "50"
     preemptible  = true
-    taint = ["NO_SCHEDULE task=preemptive"]
+    taint        = ["NO_SCHEDULE task=preemptive"]
   }
 
   ip_allocation_policy {
@@ -194,7 +194,7 @@ resource "google_dns_record_set" "frontend_demblock_tge" {
   type         = "A"
   ttl          = 300
   # rrdatas      = [google_compute_global_address.demblock_tge.address]
-  rrdatas      = [google_compute_global_address.demblock.address]
+  rrdatas = [google_compute_global_address.demblock.address]
 }
 
 resource "google_dns_record_set" "www_frontend_demblock_tge" {
