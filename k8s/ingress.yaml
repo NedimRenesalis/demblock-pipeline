@@ -8,6 +8,9 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: "demblock-global-ip"
     networking.gke.io/managed-certificates: "demblock-certs"
 spec:
+  backend:
+    serviceName: demblock
+    servicePort: 21080
   rules:
     - host: demblock.com
       http:
@@ -16,18 +19,6 @@ spec:
             serviceName: demblock
             servicePort: 21080
     - host: backend.demblock.com
-      http:
-        paths:
-        - backend:
-            serviceName: demblock
-            servicePort: 20080
-    - host: www.demblock.com
-      http:
-        paths:
-        - backend:
-            serviceName: demblock
-            servicePort: 21080
-    - host: www.backend.demblock.com
       http:
         paths:
         - backend:
@@ -46,24 +37,6 @@ spec:
             serviceName: demblock-tge
             servicePort: 20080
     - host: token.demblock-tge.com
-      http:
-        paths:
-        - backend:
-            serviceName: demblock-token
-            servicePort: 3000
-    - host: www.demblock-tge.com
-      http:
-        paths:
-        - backend:
-            serviceName: demblock-tge
-            servicePort: 21080
-    - host: www.backend.demblock-tge.com
-      http:
-        paths:
-        - backend:
-            serviceName: demblock-tge
-            servicePort: 20080
-    - host: www.token.demblock-tge.com
       http:
         paths:
         - backend:
