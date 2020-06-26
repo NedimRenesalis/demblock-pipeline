@@ -11,7 +11,7 @@ terraform {
 # Required vars
 #=======================================================================
 variable "PROJECT" {
-  default = "demblock"
+  default = "demblock-prod"
 }
 variable "SQL_USER" {}
 variable "SQL_PASSWORD" {}
