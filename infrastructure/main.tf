@@ -65,13 +65,9 @@ resource "google_container_cluster" "eu_demblock_cluster" {
   name               = var.GKE_CLUSTER
   location           = var.GKE_ZONE
   initial_node_count = 2
-  min_master_version = "1.17.4-gke.10"
+  min_master_version = "1.16.9-gke.6"
   logging_service    = "none" # logging.googleapis.com/kubernetes
   monitoring_service = "none" # monitoring.googleapis.com/kubernetes
-
-  release_channel {
-    channel = "RAPID"
-  }
 
   depends_on = [google_service_networking_connection.private_vpc_connection]
   network    = google_compute_network.demblock_network.self_link
