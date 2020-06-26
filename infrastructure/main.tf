@@ -271,7 +271,7 @@ resource "google_sql_user" "users" {
 
 resource "google_sql_database" "demblock_db" {
   project  = var.PROJECT
-  name     = var.PROJECT
+  name     = "demblock"
   instance = google_sql_database_instance.demblock_db_instance.name
 }
 
