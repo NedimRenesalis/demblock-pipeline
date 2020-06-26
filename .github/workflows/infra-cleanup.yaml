@@ -7,7 +7,7 @@ on:
 # ========================================================
 env:
   # Project shared
-  GCP_PROJECT   : demblock
+  GCP_PROJECT   : demblock-prod
   GOOGLE_REPO   : eu.gcr.io
   GKE_CLUSTER   : ${{ secrets.GKE_CLUSTER }}
   GKE_ZONE      : ${{ secrets.GKE_ZONE }}

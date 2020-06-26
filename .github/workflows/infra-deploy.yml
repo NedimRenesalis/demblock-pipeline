@@ -12,7 +12,7 @@ on:
 # =================================================================
 env:
   # Project specific
-  GCP_PROJECT        : demblock
+  GCP_PROJECT        : demblock-prod
   TF_VAR_GKE_CLUSTER : eu-demblock-cluster
   TF_VAR_GKE_REGION  : europe-north1
   TF_VAR_GKE_ZONE    : europe-north1-a
