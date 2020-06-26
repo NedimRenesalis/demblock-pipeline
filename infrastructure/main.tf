@@ -2,7 +2,7 @@
 # Terraform state will be stored in Google Bucket
 terraform {
   backend "gcs" {
-    bucket = "tf-demblock"
+    bucket = "tf-demblock-prod"
     prefix = "terraform/state"
   }
 }

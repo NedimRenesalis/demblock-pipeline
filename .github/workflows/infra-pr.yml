@@ -11,9 +11,9 @@ on:
 env:
   # Project specific
   TF_VAR_GKE_CLUSTER : eu-demblock-cluster
-  TF_VAR_GKE_ZONE    : europe-north1-a
+  TF_VAR_GKE_ZONE    : europe-west1-b
   TF_VAR_DB_INSTANCE : eu-db-demblock
-  TF_VAR_DB_LOCATION : europe-north1
+  TF_VAR_DB_LOCATION : europe-west1
 
   # User specific
   TF_VAR_SQL_USER    : ${{ secrets.DB_USERNAME }}
